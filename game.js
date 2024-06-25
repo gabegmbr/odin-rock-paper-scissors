@@ -113,7 +113,7 @@ paperButton.addEventListener("click", () => {
 });
 
 scissorsButton.addEventListener("click", () => {
-    playGame(0);
+    playGame(2);
     updateText();
 });
 
