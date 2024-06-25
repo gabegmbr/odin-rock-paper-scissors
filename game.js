@@ -10,18 +10,6 @@ function getComputerChoice(){ //return values from 0 to 2
     return Math.floor(Math.random() * 3);
 }
 
-function getUserChoice(){
-    let choice = prompt("Type in your choice: rock, paper or scissors");
-    choice = choice.toLowerCase();
-    if(choice === "rock") return 0;
-    else if(choice === "paper") return 1;
-    else if(choice === "scissors") return 2;
-    else{
-        window.alert("Unknown input.");
-        return -1;
-    }
-}
-
 function returnString(x){
     if(x == 0) return "rock";
     if(x == 1) return "paper";
@@ -31,79 +19,103 @@ function returnString(x){
 let cpuScore = 0;
 let userScore = 0;
 
-function theGame(){
+function playRound(user){
     let cpu = getComputerChoice();
-    let user = -1;
-    while(user === -1){ //the game WILL NOT RUN until the player provides a valid input. 
-        user = getUserChoice()
-    }
-    window.alert(`Computer chose ${returnString(cpu)}`);
+    let choice = `Computer chose ${returnString(cpu)}.`;
     if (cpu === user){
-        window.alert("It's a tie!");
+        return "It's a tie!";
     }
 
     //user chose rock
     if(user === 0 && cpu === 1){
-        window.alert("Paper beats rock.");
         cpuScore++;
+        return choice + '\n Paper beats rock.\n Computer won.';
     }
     if(user === 0 && cpu === 2){
-        window.alert("Rock beats scissors.");
         userScore++;
+        return choice + '\n Rock beats scissors.\n You won.';
     }
 
     //user chose paper
     if(user === 1 && cpu === 2){
-        window.alert("Scissors beat paper.");
         cpuScore++;
+        return choice +'\n Scissors beat paper.\n Computer won.';
     }
     if(user === 1 && cpu === 0){
-        window.alert("Paper beats rock.");
         userScore++;
+        return choice +'\n Paper beats rock.\n You won.';
     }
 
     //user chose scissors
     if(user === 2 && cpu === 0){
-        window.alert("Rock beats scissors.");
         cpuScore++;
+        return choice +'\n Rock beats scissors.\n Computer won.';
     }
     if(user === 2 && cpu === 1){
-        window.alert("Scissors beats paper.");
         userScore++;
+        return choice + '\n Scissors beats paper.\n You won.';
     }
 }
 
-function actuallyThisIsTheActualGame(){
-    let n = prompt("Type in the amount of rounds");
-    n = parseInt(n);
 
-    for(let i = 0; i < n; i++){
-        theGame();
-    }
-    if(n !== 0){
-        if(cpuScore == userScore){
-            window.alert(`Final Score:\nComputer: ${cpuScore}\nYou, the player: ${userScore}\nTie!`);
-        } else if(cpuScore > userScore){
-            window.alert(`Final Score:\nComputer: ${cpuScore}\nYou, the player: ${userScore}\nThe Computer won.`);
-        } else{
-            window.alert(`Final Score:\nComputer: ${cpuScore}\nYou, the player: ${userScore}\nYou, the player, won.`);
-        }
+
+const container = document.querySelector("#ui");
+
+const scoreDiv = document.createElement("div");
+scoreDiv.classList.add("scorebar");
+const cpuText = document.createElement("h1");
+cpuText.textContent = `CPU: ${cpuScore}`;
+const userText = document.createElement("h1");
+userText.textContent = `Player: ${userScore}`;
+
+scoreDiv.append(cpuText, userText);
+
+function updateText(){
+    cpuText.textContent = `CPU: ${cpuScore}`;
+    userText.textContent = `Player: ${userScore}`;
+}
+
+const instructionText = document.createElement("h1");
+instructionText.textContent = "press a button to play:";
+instructionText.classList.add("header-text");
+
+const roundResultText = document.createElement("p");
+roundResultText.classList.add("result-text");
+
+const rockButton = document.createElement("button");
+const paperButton = document.createElement("button");
+const scissorsButton = document.createElement("button");
+rockButton.textContent = "rock";
+paperButton.textContent = "paper";
+scissorsButton.textContent = "scissors";
+
+function playGame(user){
+    if (cpuScore < 5 && userScore < 5){
+        roundText = playRound(user);
+        roundResultText.textContent = roundText;
+    } else if(cpuScore === 5){
+        window.alert('Computer wins!');
+        location.reload();
+    } else {
+        window.alert('You won!');
+        location.reload();
     }
 }
 
-let replay = 1;
+rockButton.addEventListener("click", () => {
+    playGame(0);
+    updateText();
+});
 
-while(replay === 1){
-    actuallyThisIsTheActualGame()
-    replay = -1; //idk about this. to prevent user from inputing an invalid... input
-    while(replay == -1){
-        replay = prompt("Wanna replay?\nType in yes or no:");
-        replay = replay.toLowerCase();
-        if(replay === "yes") replay = 1;
-        else if(replay === "no") replay = 0;
-        else if(replay === "not really"){
-            window.alert("Ok... bye!\n");
-        }
-        else replay = -1;
-    }
-}
+paperButton.addEventListener("click", () => {
+    playGame(1);
+    updateText();
+});
+
+scissorsButton.addEventListener("click", () => {
+    playGame(0);
+    updateText();
+});
+
+container.append(scoreDiv, instructionText, rockButton, paperButton, scissorsButton, roundResultText);
+
